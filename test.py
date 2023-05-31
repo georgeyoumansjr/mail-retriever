@@ -1,16 +1,12 @@
-from django.shortcuts import render
-
 # Define imports and config dictionary
 import msal
 import requests
 from dotenv import load_dotenv 
 import os 
-from django.http import HttpResponse
-from django.conf import settings
 
 
-pathdot = os.path.join(settings.BASE_DIR,".env")
-load_dotenv(pathdot)
+
+load_dotenv()
 
 
 config = {
@@ -65,28 +61,12 @@ def make_graph_call(url, pagination=True):
 client = msal.ConfidentialClientApplication(config['client_id'], authority=config['authority'], client_credential=config['client_secret'])
 # print(client)""
 # Make an MS Graph call
-
-
-
-def showMails(request):
-  mail_folders = ["junkemail","sentitems","inbox"]
-  context = {}
-  if request.method == 'GET':
-    for folder in mail_folders:
-       url = 'https://graph.microsoft.com/v1.0/users/'+os.getenv("USER_ID")+f"/mailFolders('{folder}')/messages"
-       resp = make_graph_call(url, pagination=False)
-       context[folder] = resp
-    
-    print(context)
-
-    return render(request,'outlook/allFolders.html',context)
-  else:
-    return HttpResponse("INVALID REQUEST TYPE")
-
-
-
-
-
+url = 'https://graph.microsoft.com/v1.0/users/'+os.getenv("USER_ID")+"/mailFolders('inbox')/messages"
+resp = make_graph_call(url, pagination=False)
+import json
+with open("response.json","w") as filew:
+  json.dump(resp,filew)
+print(resp)
 
 
 

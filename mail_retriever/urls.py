@@ -25,5 +25,7 @@ def index(request):
     return render(request,"base.html")
 
 urlpatterns = [
+    path('',index),
+    path('outlook/',include("outlook.urls")),
     path('admin/', admin.site.urls),
 ]
